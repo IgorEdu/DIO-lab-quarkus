@@ -11,6 +11,12 @@ services:
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
+      - --metrics.prometheus=true
+      - --metrics.prometheus.buckets=0.100000, 0.300000, 1.200000, 5.000000
+      - --metrics.prometheus.addEntryPointsLabels=true
+      - --metrics.prometheus.addServicesLabels=true
+      - --entryPoints.metrics.address=:8899
+      - --metrics.prometheus.entryPoint=metrics
     ports:
       - 80:80
       - 8080:8080
@@ -32,7 +38,7 @@ services:
       - QUARKUS_DATASOURCE_USERNAME=election-management-user
       - QUARKUS_DATASOURCE_PASSWORD=election-management-password
       - QUARKUS_DATASOURCE_JDBC_URL=jdbc:otel:mariadb://database:3306/election-management
-      - QUARKUS_REDIS_HOST=redis://caching:6379
+      - QUARKUS_REDIS_HOSTS=redis://caching:6379
     labels:
       - traefik.http.routers.election-management.rule=Host(`vote.dio.localhost`) && PathPrefix(`/api`)
       - traefik.http.routers.election-management.entrypoints=web
@@ -142,3 +148,32 @@ services:
       - traefik.http.routers.jaeger.service=jaeger
       - traefik.http.routers.jaeger.middlewares=admin-admin-auth@docker
       - traefik.http.services.jaeger.loadbalancer.server.port=16686
+
+  ## MONITORING
+  prometheus:
+    image: prom/prometheus:latest
+    depends_on:
+      jaeger:
+        condition: service_started
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.private.dio.localhost`)
+      - traefik.http.routers.prometheus.entrypoints=web
+      - traefik.http.routers.prometheus.service=prometheus
+      - traefik.http.services.prometheus.loadbalancer.server.port=9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana-oss
+    depends_on:
+      jaeger:
+        condition: service_started
+      prometheus:
+        condition: service_started
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.rule=Host(`metrics.private.dio.localhost`)
+      - traefik.http.routers.grafana.entrypoints=web
+      - traefik.http.routers.grafana.service=grafana
+      - traefik.http.services.grafana.loadbalancer.server.port=3000

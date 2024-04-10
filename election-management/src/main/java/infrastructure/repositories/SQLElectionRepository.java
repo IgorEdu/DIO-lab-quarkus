@@ -40,7 +40,7 @@ public class SQLElectionRepository implements ElectionRepository {
 
     @Override
     public List<Election> findAll() {
-        Stream<Object[]> stream = entityManager.createNativeQuery("SELECT e.id AS election_id, c.id AS candidate_id, c.photo, c.given_name, c.family_name, c.name, c.phone, c.job_title, ec_votes FROM elections AS e INNER JOIN election_candidate AS ec ON ec.election_id = e.id INNER JOIN candidate AS c ON c.id = ec.candidate_id")
+        Stream<Object[]> stream = entityManager.createNativeQuery("SELECT e.id AS election_id, c.id AS candidate_id, c.photo, c.given_name, c.family_name, c.email, c.phone, c.job_title, ec.votes FROM elections AS e INNER JOIN election_candidate AS ec ON ec.election_id = e.id INNER JOIN candidates AS c ON ec.candidate_id = c.id")
                 .getResultStream();
 
         Map<String, List<Object[]>> map = stream.collect(groupingBy(o -> (String) o[0]));
@@ -49,19 +49,18 @@ public class SQLElectionRepository implements ElectionRepository {
                 .stream()
                 .map(entry -> {
                     Map.Entry<Candidate, Integer>[] candidates = entry.getValue()
-                                                                        .stream()
-                                                                        .map(row -> Map.entry(new Candidate((String)row[1],
-                                                                                                Optional.ofNullable((String)row[2]),
-                                                                                                (String)row[3],
-                                                                                                (String)row[4],
-                                                                                                (String)row[5],
-                                                                                                Optional.ofNullable((String)row[6]),
-                                                                                                Optional.ofNullable((String)row[7])),
-                                                                                                (Integer) row[8]
-                                                                                ))
+                            .stream()
+                            .map(row -> Map.entry(new Candidate((String)row[1],
+                                            Optional.ofNullable((String)row[2]),
+                                            (String)row[3],
+                                            (String)row[4],
+                                            (String)row[5],
+                                            Optional.ofNullable((String)row[6]),
+                                            Optional.ofNullable((String)row[7])),
+                                    (Integer) row[8]))
                             .toArray(Map.Entry[]::new);
 
-                return new Election(entry.getKey(), Map.ofEntries(candidates));
+                    return new Election(entry.getKey(), Map.ofEntries(candidates));
                 })
                 .toList();
     }

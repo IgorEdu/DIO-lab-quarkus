@@ -167,10 +167,13 @@ services:
   grafana:
     image: grafana/grafana-oss
     depends_on:
-      jaeger:
-        condition: service_started
       prometheus:
         condition: service_started
+    volumes:
+#      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    env_file:
+      - ./grafana/config.env
     labels:
       - traefik.enable=true
       - traefik.http.routers.grafana.rule=Host(`metrics.private.dio.localhost`)

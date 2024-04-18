@@ -4,8 +4,6 @@ import api.CandidateApi;
 import api.dto.in.CreateCandidate;
 import api.dto.in.UpdateCandidate;
 import api.dto.out.Candidate;
-import org.hibernate.sql.Update;
-import org.jboss.logging.annotations.Producer;
 import org.jboss.resteasy.reactive.ResponseStatus;
 import org.jboss.resteasy.reactive.RestResponse;
 
@@ -17,7 +15,7 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/api/candidates")
-public class CandidateResource {
+public class CandidateResource{
     private final CandidateApi api;
 
     public CandidateResource(CandidateApi api) {
@@ -41,5 +39,11 @@ public class CandidateResource {
     @GET
     public List<Candidate> list(){
         return api.list();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Candidate findById(@PathParam("id") String id){
+        return api.findById(id);
     }
 }

@@ -22,7 +22,7 @@ public class ElectionService {
     }
 
     public List<Election> findAll(){
-        return repository.findAll();
+        return repository.findAll().list();
     }
 
     public void submit(){

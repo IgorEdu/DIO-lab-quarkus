@@ -3,6 +3,7 @@ package infrastructure.repositories;
 import domain.Candidate;
 import domain.Election;
 import domain.ElectionRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.pubsub.PubSubCommands;
 import io.quarkus.redis.datasource.sortedset.ScoreRange;
@@ -15,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class RedisElectionRepository implements ElectionRepository {
+public class RedisElectionRepository extends ElectionRepository {
     private final SortedSetCommands<String, String> commands;
     private final PubSubCommands<String> pubSubCommands;
 
@@ -37,7 +38,7 @@ public class RedisElectionRepository implements ElectionRepository {
     }
 
     @Override
-    public List<Election> findAll() {
+    public PanacheQuery<Election> findAll() {
         throw new UnsupportedOperationException();
     }
 

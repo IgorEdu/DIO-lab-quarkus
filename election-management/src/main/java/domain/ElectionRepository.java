@@ -1,9 +1,10 @@
 package domain;
 
-import java.util.List;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 
-public interface ElectionRepository {
-    void submit(Election election);
+public class ElectionRepository implements PanacheRepositoryBase<Election, String> {
 
-    List<Election> findAll();
+    public void submit(Election election) {
+    }
+
 }

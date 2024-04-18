@@ -1,23 +1,34 @@
 package domain;
 
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
-public interface CandidateRepository {
-    void save(List<Candidate> candidates);
-    default void save(Candidate candidate){
-        save(List.of(candidate));
+public class CandidateRepository implements PanacheRepositoryBase<infrastructure.repositories.entities.Candidate, String>{
+
+    @Transactional
+    public void save(List<Candidate> candidates){
+        for(Candidate candidate : candidates){
+            persist(infrastructure.repositories.entities.Candidate.fromDomain(candidate));
+        }
     }
 
-    List<Candidate> find(CandidateQuery query);
+//    public void save(Candidate candidate){
+//        save(List.of(candidate));
+//    }
 
-    default List<Candidate> findAll(){
-        return find(new CandidateQuery.Builder().build());
+    public List<Candidate> find(CandidateQuery query) {
+        return null;
     }
 
-    default Optional<Candidate> findById(String id){
-        CandidateQuery query = new CandidateQuery.Builder().ids(Set.of(id)).build();
-        return find(query).stream().findFirst();
-    }
+
+//    default List<Candidate> findAll(){
+//        return find(new CandidateQuery.Builder().build());
+//    }
+//
+//    public infrastructure.repositories.entities.Candidate findById(String id){
+//        CandidateQuery query = new CandidateQuery.Builder().ids(Set.of(id)).build();
+//        return find(query).stream().findFirst();
+//    }
 }

@@ -27,4 +27,8 @@ public class CandidateApi {
     public List<Candidate> list(){
         return service.findAll().stream().map(Candidate::fromDomain).toList();
     }
+
+    public Candidate findById(String id) {
+        return Candidate.fromDomain(service.findById(id));
+    }
 }

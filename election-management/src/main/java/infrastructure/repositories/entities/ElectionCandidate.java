@@ -1,10 +1,12 @@
 package infrastructure.repositories.entities;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
 @Entity(name = "election_candidate")
-public class ElectionCandidate {
+public class ElectionCandidate extends PanacheEntityBase {
     @EmbeddedId
     private ElectionCandidateId id;
 
@@ -33,7 +35,7 @@ public class ElectionCandidate {
 
         ElectionCandidateId id = new ElectionCandidateId();
         id.setElectionId(election.id());
-        id.setCandidate_id(candidate.id());
+        id.setCandidateId(candidate.id());
 
         entity.setId(id);
         entity.setVotes(votes);

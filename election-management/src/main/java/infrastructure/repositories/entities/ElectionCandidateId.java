@@ -9,7 +9,7 @@ public class ElectionCandidateId implements Serializable {
     @Column(name = "election_id")
     private String electionId;
     @Column(name = "candidate_id")
-    private String candidate_id;
+    private String candidateId;
 
     public String getElectionId() {
         return electionId;
@@ -19,11 +19,11 @@ public class ElectionCandidateId implements Serializable {
         this.electionId = electionId;
     }
 
-    public String getCandidate_id() {
-        return candidate_id;
+    public String getCandidateId() {
+        return candidateId;
     }
 
-    public void setCandidate_id(String candidate_id) {
-        this.candidate_id = candidate_id;
+    public void setCandidateId(String candidateId) {
+        this.candidateId = candidateId;
     }
 }

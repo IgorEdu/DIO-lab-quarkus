@@ -19,6 +19,6 @@ public class Sync {
 
     @Scheduled(cron = "*/10 * * * * ?")
     void sync() {
-        sqlRepository.findAll().forEach(election -> sqlRepository.sync(redisRepository.sync(election)));
+        sqlRepository.findAllByCandidate().forEach(election -> sqlRepository.sync(redisRepository.sync(election)));
     }
 }
